@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  App bundle 1
-//
-//  Created by lilit on 29.07.25.
-//
-
 import UIKit
 
 class ViewController: UIViewController {
@@ -32,6 +25,13 @@ class ViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
+    let appendButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Append", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,12 +39,14 @@ class ViewController: UIViewController {
         setupLayout()
         saveButton.addTarget(self, action: #selector(saveTapped), for: .touchUpInside)
         loadButton.addTarget(self, action: #selector(loadTapped), for: .touchUpInside)
+        appendButton.addTarget(self, action: #selector(appendTapped), for: .touchUpInside)
     }
 
     func setupLayout() {
         view.addSubview(textView)
         view.addSubview(saveButton)
         view.addSubview(loadButton)
+        view.addSubview(appendButton)
 
         NSLayoutConstraint.activate([
             textView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -59,6 +61,10 @@ class ViewController: UIViewController {
             loadButton.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 20),
             loadButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
             loadButton.widthAnchor.constraint(equalToConstant: 100),
+            
+            appendButton.topAnchor.constraint(equalTo: saveButton.bottomAnchor, constant: 20),
+            appendButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            appendButton.widthAnchor.constraint(equalToConstant: 100),
         ])
     }
 
@@ -66,12 +72,8 @@ class ViewController: UIViewController {
         let text = textView.text ?? ""
         let success = MyTextFileManager.save(text: text)
         showAlert(
-            title: success
-                ? "Success"
-                : "Error",
-            message: success
-                ? "File saved successfully."
-                : "Failed to save.")
+            title: success ? "Success" : "Error",
+            message: success ? "File saved successfully." : "Failed to save.")
     }
 
     @objc func loadTapped() {
@@ -81,6 +83,14 @@ class ViewController: UIViewController {
             showAlert(title: "Error", message: "No file found")
         }
     }
+    
+    @objc func appendTapped() {
+        let text = textView.text ?? ""
+        let success = MyTextFileManager.append(text: text)
+        showAlert(
+            title: success ? "Success" : "Error",
+            message: success ? "Text appended successfully." : "Failed to append.")
+    }
 
     func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -88,6 +98,3 @@ class ViewController: UIViewController {
         present(alert, animated: true)
     }
 }
-
-
-

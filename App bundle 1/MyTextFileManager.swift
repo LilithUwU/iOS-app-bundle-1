@@ -1,12 +1,4 @@
-//
-//  TextFileManager.swift
-//  App bundle 1
-//
-//  Created by lilit on 29.07.25.
-//
-
 import Foundation
-
 class MyTextFileManager {
 
     private static let fileName = "note.txt"
@@ -36,5 +28,23 @@ class MyTextFileManager {
             return nil
         }
     }
-}
 
+    static func append(text: String) -> Bool {
+        guard let fileURL = getDocumentURL(for: fileName) else { return false }
+        let data = ("\n" + text).data(using: .utf8)!
+        do {
+            if FileManager.default.fileExists(atPath: fileURL.path) {
+                let fileHandle = try FileHandle(forWritingTo: fileURL)
+                defer { fileHandle.closeFile() }
+                fileHandle.seekToEndOfFile()
+                fileHandle.write(data)
+            } else {
+                try data.write(to: fileURL)
+            }
+            return true
+        } catch {
+            print("MyTextFileManager Append Error: \(error)")
+            return false
+        }
+    }
+}
